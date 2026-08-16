@@ -21,10 +21,14 @@ test("server-renders the Physical AI field manual", async () => {
   assert.match(html, /FIRST PRINCIPLES/);
   assert.match(html, /FEYNMAN CHECK/);
   assert.match(html, /INTERACTIVE LAB/);
+  assert.match(html, /PHYSICAL AI HISTORY/);
+  assert.match(html, /控制论：机器第一次学会纠错/);
+  assert.match(html, /VLA 与跨本体数据/);
+  assert.match(html, /问题并没有消失/);
   assert.doesNotMatch(html, /Starter Project|Your site is taking shape/);
 });
 
 test("workspace contains the field manual social card", async () => {
   const { access } = await import("node:fs/promises");
-  await access(new URL("public/og-manual.png", templateRoot));
+  await access(new URL("public/og-history.png", templateRoot));
 });

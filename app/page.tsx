@@ -435,12 +435,119 @@ const chapters: Chapter[] = [
   },
 ];
 
-const lineage = [
-  ["1948", "Norbert Wiener", "Cybernetics：把控制、通信与反馈放进同一框架。"],
-  ["1960", "Rudolf Kalman", "用递归估计在噪声中维护对状态的信念。"],
-  ["1980s", "Brooks / Khatib", "行为式机器人与 operational-space control 让智能更贴近身体和实时交互。"],
-  ["1990s–2010s", "Sutton, Barto 与机器人学习社区", "强化学习、模仿学习逐渐进入连续控制与真实机器人。"],
-  ["2023–now", "RT-X · π₀ · LeRobot · Gemini Robotics", "多任务、多本体数据与视觉语言动作模型探索通用机器人策略。"],
+type HistoryEra = {
+  period: string;
+  phase: string;
+  title: string;
+  thesis: string;
+  breakthroughs: string[];
+  bottleneck: string;
+  systems: { name: string; note: string; url: string }[];
+  color: string;
+};
+
+const historyEras: HistoryEra[] = [
+  {
+    period: "1948–1950s",
+    phase: "FEEDBACK",
+    title: "控制论：机器第一次学会纠错",
+    thesis: "Norbert Wiener 把动物与机器中的控制、通信和反馈放进同一框架。智能不再只是预先写好的动作，而可以比较目标与结果，用误差改变下一次行动。",
+    breakthroughs: ["负反馈把偏差变成修正动作", "噪声与通信被纳入控制问题", "稳定性成为可分析、可设计的系统性质"],
+    bottleneck: "反馈控制能让系统稳定，却不知道环境中有什么，也无法自己决定应该追求什么目标。",
+    systems: [{ name: "Cybernetics", note: "1948 · Wiener", url: "https://mitpress.mit.edu/9780262355919/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/" }],
+    color: "#ff6a3d",
+  },
+  {
+    period: "1959–1970s",
+    phase: "AUTOMATION",
+    title: "工业机器人：身体进入工厂",
+    thesis: "Unimate 把可重复编程的机械臂带上生产线。机器人开始稳定执行搬运、焊接等危险和重复任务，证明了计算控制能够可靠地驱动物理身体。",
+    breakthroughs: ["数字程序取代专用机械凸轮", "高重复精度支持大规模制造", "执行器、减速器与安全围栏形成工程体系"],
+    bottleneck: "它的可靠来自环境固定、工件一致和人与机器隔离；一旦位置、物体或任务改变，能力就迅速消失。",
+    systems: [{ name: "Unimate", note: "1961 · GM production line", url: "https://ifr.org/robot-history" }],
+    color: "#ffce54",
+  },
+  {
+    period: "1966–1980s",
+    phase: "SYMBOLIC AI",
+    title: "AI 进入机器人：先建模，再规划",
+    thesis: "Shakey 把摄像机、环境模型、符号推理、路径规划和运动控制连接成一条感知—计划—行动链。机器人第一次能根据目标推导一串动作，而不只是重放轨迹。",
+    breakthroughs: ["把感知结果写入显式世界模型", "使用符号规划把目标分解为步骤", "连接视觉、规划与真实移动底盘"],
+    bottleneck: "现实必须被简化成干净的符号；感知和规划很慢，任何未建模变化都可能让整条推理链失效。",
+    systems: [{ name: "Shakey", note: "1966–72 · SRI", url: "https://www.sri.com/hoi/shakey-the-robot/" }],
+    color: "#87a9ff",
+  },
+  {
+    period: "1980s–1990s",
+    phase: "EMBODIMENT",
+    title: "智能回到身体：先及时行动",
+    thesis: "Rodney Brooks 的行为式机器人主张，不必先建立完整世界模型；多个简单感知—动作回路可以直接产生实时、鲁棒的行为。与此同时，operational-space control 让机械臂在任务空间直接控制位置与力。",
+    breakthroughs: ["Subsumption architecture 用分层行为替代单一中央模型", "身体与环境本身参与计算", "任务空间控制把接触、位置和力放进闭环"],
+    bottleneck: "反应式系统能避障和行走，却难以表示抽象目标、组合新技能，也缺乏长程规划与可解释记忆。",
+    systems: [{ name: "Intelligence without representation", note: "1991 · Brooks", url: "https://people.csail.mit.edu/brooks/papers/BrooksIJCAI91.pdf" }],
+    color: "#d6ff45",
+  },
+  {
+    period: "1990s–2000s",
+    phase: "AUTONOMY",
+    title: "概率机器人：在不确定世界中行动",
+    thesis: "Kalman filtering、particle filters、SLAM 与传感器融合让机器人不再假设测量等于真相，而是维护对自身与环境状态的概率信念。DARPA Grand Challenge 则把整套自治栈推向高速、开放环境。",
+    breakthroughs: ["估计结果同时表达数值与不确定性", "SLAM 联合解决定位与地图构建", "感知—预测—规划—控制成为模块化自治栈"],
+    bottleneck: "每个模块依赖人工特征、地图、规则和接口；系统可以很强，但扩展到新场景的工程成本极高。",
+    systems: [{ name: "DARPA Grand Challenge", note: "2004–07 · autonomous driving", url: "https://www.darpa.mil/about/innovation-timeline/grand-challenge" }],
+    color: "#d19aff",
+  },
+  {
+    period: "2010s",
+    phase: "ROBOT LEARNING",
+    title: "从编程到训练：策略由数据长出来",
+    thesis: "深度学习把图像直接连接到连续动作；模仿学习从人类示范提取行为，强化学习从奖励中试错。大规模抓取和 sim-to-real 证明，某些过去必须手写的能力可以通过数据获得。",
+    breakthroughs: ["端到端 visuomotor policy 联合学习视觉与控制", "大规模机器人数据覆盖抓取变化", "域随机化与并行仿真降低现实试错成本"],
+    bottleneck: "真实数据昂贵，训练分布之外容易失效；高平均成功率仍可能掩盖危险的长尾失败。",
+    systems: [
+      { name: "End-to-end visuomotor", note: "2015 · Levine et al.", url: "https://arxiv.org/abs/1504.00702" },
+      { name: "800k grasp attempts", note: "2016 · large-scale grasping", url: "https://arxiv.org/abs/1603.02199" },
+    ],
+    color: "#5ed6b3",
+  },
+  {
+    period: "2022–2024",
+    phase: "FOUNDATION POLICIES",
+    title: "VLA 与跨本体数据：一个模型，许多任务",
+    thesis: "语言模型和视觉模型的语义知识开始被接到机器人动作上。RT-2 把动作表示成 token；Open X-Embodiment 汇集多种机器人数据；ALOHA/ACT 与 π₀ 探索动作块、流模型和跨本体策略。",
+    breakthroughs: ["视觉、语言、目标与动作进入统一策略", "跨任务、跨机构的数据开始形成共同语料", "预训练知识支持语义泛化与新指令组合"],
+    bottleneck: "不同身体的动作空间并不天然兼容；模型会犹豫、幻觉或执行失败，真实世界的可靠性远低于语言基准。",
+    systems: [
+      { name: "RT-2", note: "2023 · vision-language-action", url: "https://deepmind.google/blog/rt-2-new-model-translates-vision-and-language-into-action/" },
+      { name: "Open X-Embodiment", note: "2023 · cross-robot dataset", url: "https://robotics-transformer-x.github.io/" },
+      { name: "ALOHA / ACT", note: "2023 · action chunking", url: "https://arxiv.org/abs/2304.13705" },
+      { name: "π₀", note: "2024 · flow-based VLA", url: "https://www.physicalintelligence.company/blog/pi0" },
+    ],
+    color: "#ff8eb9",
+  },
+  {
+    period: "2024–2026",
+    phase: "PHYSICAL AI",
+    title: "Physical AI：把整个闭环重新看成一个问题",
+    thesis: "Physical AI 成为连接基础模型、世界模型、仿真、机器人学习和真实身体的总称。Gemini Robotics 等系统强调空间推理与动作，产业则用数字孪生和合成数据训练、验证并部署真实机器。",
+    breakthroughs: ["通用模型与高频控制器分层协作", "仿真、合成数据与真实日志形成数据闭环", "移动、操作、语言和安全被放进统一系统评测"],
+    bottleneck: "前沿已从‘能否演示’转向长任务可靠性、失败检测、边缘实时性、跨本体迁移与可证明的物理安全。",
+    systems: [
+      { name: "Gemini Robotics", note: "2025 · embodied reasoning", url: "https://deepmind.google/blog/gemini-robotics-brings-ai-into-the-physical-world/" },
+      { name: "Gemini Robotics-ER 1.6", note: "2026 · updated embodied reasoning", url: "https://deepmind.google/blog/gemini-robotics-er-1-6/" },
+    ],
+    color: "#ff6a3d",
+  },
+];
+
+const bottleneckShifts = [
+  ["反馈控制", "让机器自动纠错", "不理解环境与目标"],
+  ["工业自动化", "让身体精确、重复工作", "环境必须固定"],
+  ["符号机器人", "让目标变成计划", "世界模型太慢、太脆"],
+  ["行为机器人", "让反应实时而鲁棒", "缺少长程推理"],
+  ["概率自治", "让系统处理噪声与定位", "规则和模块难扩展"],
+  ["深度机器人学习", "让策略从数据中获得", "数据昂贵、分布外脆弱"],
+  ["VLA / Physical AI", "让知识、语言与动作迁移", "可靠性、安全与物理落地"],
 ];
 
 const sources = [
@@ -452,6 +559,11 @@ const sources = [
   ["Open X-Embodiment", "跨机器人数据与 RT-X 模型的原始项目。", "https://robotics-transformer-x.github.io/"],
   ["Physical Intelligence π₀", "视觉语言动作 flow model 与跨本体训练。", "https://www.physicalintelligence.company/blog/pi0"],
   ["NVIDIA Isaac Lab", "GPU 并行机器人学习与仿真评测。", "https://developer.nvidia.com/isaac/lab"],
+  ["Cybernetics", "Wiener 关于反馈、通信与控制的奠基文本。", "https://mitpress.mit.edu/9780262355919/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/"],
+  ["SRI Shakey", "首批把视觉、规划与真实移动连接起来的通用机器人。", "https://www.sri.com/hoi/shakey-the-robot/"],
+  ["DARPA Grand Challenge", "推动现代自动驾驶自治栈走出实验室的挑战赛。", "https://www.darpa.mil/about/innovation-timeline/grand-challenge"],
+  ["RT-2", "把视觉、语言与机器人动作统一为 token 的 VLA 系统。", "https://deepmind.google/blog/rt-2-new-model-translates-vision-and-language-into-action/"],
+  ["Gemini Robotics", "Google DeepMind 的具身推理与机器人控制模型。", "https://deepmind.google/blog/gemini-robotics-brings-ai-into-the-physical-world/"],
 ];
 
 function SectionBlock({ section }: { section: Section }) {
@@ -487,7 +599,7 @@ export default function Home() {
     <main>
       <nav className="topbar">
         <a href="#top" className="brand"><span>P·AI</span><b>PHYSICAL AI FIELD MANUAL</b></a>
-        <div className="navlinks"><a href="#atlas">地图</a><a href="#reader">教材</a><a href="#lab">交互实验</a><a href="#case">案例</a></div>
+        <div className="navlinks"><a href="#atlas">地图</a><a href="#history">历史</a><a href="#reader">教材</a><a href="#lab">交互实验</a><a href="#case">案例</a></div>
         <a href="#reader" className="read-cta">开始阅读 ↘</a>
       </nav>
 
@@ -498,7 +610,7 @@ export default function Home() {
           <h1>不是学习路线。<br /><em>这是教材本身。</em></h1>
           <p className="deck">从第一性原理理解感知、状态、规划、策略、控制与身体；沿着一个完整抓取案例，直到你能解释系统如何工作、为什么失败，以及怎样验证。</p>
           <div className="hero-actions"><a href="#reader">进入第一章 <span>↓</span></a><a href="#lab">先玩闭环实验 <span>↗</span></a></div>
-          <div className="hero-proof"><span>10 章完整讲解</span><span>30+ 核心概念</span><span>10 个实验</span><span>20 道费曼自测</span></div>
+          <div className="hero-proof"><span>10 章完整讲解</span><span>8 个历史阶段</span><span>10 个实验</span><span>20 道费曼自测</span></div>
         </div>
         <div className="hero-loop" aria-label="Physical AI 闭环图">
           <div className="loop-center"><small>PHYSICAL AI</small><strong>感知—行动<br />闭环</strong><p>observe · estimate · decide · act · verify</p></div>
@@ -516,6 +628,32 @@ export default function Home() {
         <div className="skill-ladder">
           <div><p className="eyebrow">NOVICE → EXPERT</p><h3>能力差别不在知道多少名词</h3></div>
           <ol><li><span>01</span><b>初学者</b><p>能运行 demo，描述六层分别做什么。</p></li><li><span>02</span><b>构建者</b><p>能连接传感、规划和控制，量化误差。</p></li><li><span>03</span><b>系统工程师</b><p>能定位跨层失败，设计恢复与监控。</p></li><li><span>04</span><b>研究者／专家</b><p>能提出可证伪假设，改变数据、模型或身体边界。</p></li></ol>
+        </div>
+      </section>
+
+      <section className="history" id="history">
+        <div className="shell">
+          <div className="section-head split history-head"><div><p className="eyebrow">PHYSICAL AI HISTORY / 八个阶段</p><h2>它不是突然出现。<br />每一代都在修补上一代。</h2></div><p>这段历史不是名字清单，而是一条问题链：先让机器纠错，再让身体可靠执行；再解决感知、规划、不确定性、学习、迁移，最后才走到今天的 Physical AI。</p></div>
+          <div className="history-rail" aria-hidden="true">{historyEras.map((era, index) => <span key={era.period} style={{ "--tone": era.color } as React.CSSProperties}><i>{String(index + 1).padStart(2, "0")}</i><b>{era.period}</b></span>)}</div>
+          <div className="era-list">
+            {historyEras.map((era, index) => <article className="era" key={era.period} style={{ "--tone": era.color } as React.CSSProperties}>
+              <div className="era-marker"><span>{String(index + 1).padStart(2, "0")}</span><i /><b>{era.period}</b><small>{era.phase}</small></div>
+              <div className="era-body">
+                <h3>{era.title}</h3>
+                <p className="era-thesis">{era.thesis}</p>
+                <div className="era-detail">
+                  <div><span>WHAT CHANGED / 突破</span><ul>{era.breakthroughs.map((item) => <li key={item}>{item}</li>)}</ul></div>
+                  <div className="era-limit"><span>THE NEXT BOTTLENECK / 新瓶颈</span><p>{era.bottleneck}</p></div>
+                </div>
+                <div className="era-systems"><span>REPRESENTATIVE SYSTEMS</span>{era.systems.map((system) => <a href={system.url} target="_blank" rel="noreferrer" key={system.url}><b>{system.name}</b><small>{system.note}</small><i>↗</i></a>)}</div>
+              </div>
+            </article>)}
+          </div>
+
+          <section className="bottleneck-map">
+            <div><p className="eyebrow">THE PATTERN BENEATH THE TIMELINE</p><h3>能力增加，<br />问题并没有消失——<br />只是向上迁移。</h3><p>今天的 VLA 仍然依赖反馈控制、状态估计和安全系统。新范式通常包住旧范式，而不是把它删除。</p></div>
+            <div className="shift-table"><div className="shift-head"><span>范式</span><span>解决了</span><span>留下了</span></div>{bottleneckShifts.map(([era, solved, left], index) => <div className="shift-row" key={era}><span><i>{String(index + 1).padStart(2, "0")}</i>{era}</span><span>{solved}</span><span>{left}</span></div>)}</div>
+          </section>
         </div>
       </section>
 
@@ -574,11 +712,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="lineage shell">
-        <div className="section-head split"><div><p className="eyebrow">INTELLECTUAL LINEAGE</p><h2>今天的浪潮<br />从哪里长出来</h2></div><p>Physical AI 不是突然出现的新名词。它把控制论、状态估计、机器人控制、强化学习与基础模型连接到同一个物理闭环。</p></div>
-        <div className="timeline">{lineage.map(([year, who, idea]) => <article key={year}><span>{year}</span><b>{who}</b><p>{idea}</p></article>)}</div>
       </section>
 
       <section className="source-room">

@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
   const title = "Physical AI Field Manual｜具身智能互动教材";
-  const description = "从第一性原理学习感知、状态估计、规划、机器人学习、控制、身体、sim-to-real 与安全评测。";
+  const description = "从控制论到 VLA：沿八个历史阶段，从第一性原理学习感知、状态估计、规划、机器人学习、控制、身体、sim-to-real 与安全评测。";
 
   return {
     metadataBase: new URL(origin),
@@ -23,9 +23,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
-      images: [{ url: `${origin}/og-manual.png`, width: 1536, height: 1024, alt: "Physical AI Field Manual 具身智能互动教材" }],
+      images: [{ url: `${origin}/og-history.png`, width: 1536, height: 1024, alt: "Physical AI Field Manual 从控制论到具身智能" }],
     },
-    twitter: { card: "summary_large_image", title, description, images: [`${origin}/og-manual.png`] },
+    twitter: { card: "summary_large_image", title, description, images: [`${origin}/og-history.png`] },
   };
 }
 
