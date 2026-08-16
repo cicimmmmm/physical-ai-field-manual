@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3001";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const title = "具身智能：一小时全景地图";
-  const description = "为物理—数字创作者定制的 60 分钟具身智能认知地图与创业机会指南。";
+  const title = "Physical AI Field School｜16 周具身智能学习计划";
+  const description = "从机器人动力学、控制与感知，到强化学习、模仿学习、VLA 和安全部署的 16 周实践课程。";
 
   return {
     metadataBase: new URL(origin),
@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
-      images: [{ url: `${origin}/og.png`, width: 1680, height: 945, alt: "一小时，建立你的具身智能全景地图" }],
+      images: [{ url: `${origin}/og.png`, width: 1536, height: 1024, alt: "Physical AI Field School 16 周学习计划" }],
     },
     twitter: { card: "summary_large_image", title, description, images: [`${origin}/og.png`] },
   };
